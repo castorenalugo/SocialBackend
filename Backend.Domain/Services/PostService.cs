@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Backend.Domain.CustomEntities;
 using Backend.Domain.Entities;
 using Backend.Domain.Exceptions;
 using Backend.Domain.Interfaces;
+using Backend.Domain.QueryFilters;
 using Backend.Domain.Repositories;
 
 namespace Backend.Domain.Services
@@ -25,9 +27,29 @@ namespace Backend.Domain.Services
             return await _unitOfWork.PostRepository.GetById(id);
         }
 
-        public IEnumerable<Post> GetPosts()
+        public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
-            return _unitOfWork.PostRepository.GetAll();
+            var posts = _unitOfWork.PostRepository.GetAll();
+
+            if(filters.UserId != null)
+            {
+                posts = posts.Where(x => x.UserId == filters.UserId);
+            }
+
+            if (filters.Date != null)
+            {
+                posts = posts.Where(x => x.Date.ToShortDateString() == filters.Date?.ToShortDateString());
+            }
+
+            if (filters.Description != null)
+            {
+                posts = posts.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
+            }
+
+            var pagedPosts = PagedList<Post>.Create(posts, filters.PageNumber, filters.PageSize);
+
+
+            return pagedPosts;
         }
 
         public async Task InsertPost(Post post)

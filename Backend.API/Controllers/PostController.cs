@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Backend.API.Responses;
 using Backend.Domain.DTOs;
 using Backend.Domain.Entities;
 using Backend.Domain.Interfaces;
+using Backend.Domain.QueryFilters;
 using Microsoft.AspNetCore.Mvc;
-
+using Newtonsoft.Json;
 
 namespace Backend.API.Controllers
 {
@@ -27,12 +29,27 @@ namespace Backend.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetPosts()
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public ActionResult<ApiResponse<IEnumerable<PostDto>>> GetPosts([FromQuery] PostQueryFilter filters)
         {
-            var posts = _postService.GetPosts();
+            var posts = _postService.GetPosts(filters);
             var postsDtos = _mapper.Map<IEnumerable<PostDto>>(posts);
             var response = new ApiResponse<IEnumerable<PostDto>>(postsDtos);
-            return Ok(response);
+
+            var metadata = new
+            {
+                posts.TotalCount,
+                posts.PageSize,
+                posts.CurrentPage,
+                posts.TotalPages,
+                posts.HasNextPage,
+                posts.HasPreviousPage
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return response;
         }
 
         [HttpGet("{id}")]
