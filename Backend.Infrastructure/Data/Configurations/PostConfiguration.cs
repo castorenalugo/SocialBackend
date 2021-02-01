@@ -11,9 +11,9 @@ namespace Backend.Infrastructure.Data.Configurations
         {
             builder.ToTable("Publicacion");
 
-            builder.HasKey(e => e.PostId);
+            builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.PostId)
+            builder.Property(e => e.Id)
                 .HasColumnName("IdPublicacion");
 
             builder.Property(e => e.UserId)
@@ -35,7 +35,7 @@ namespace Backend.Infrastructure.Data.Configurations
                 .HasMaxLength(500)
                 .IsUnicode(false);
 
-            builder.HasOne(d => d.Users)
+            builder.HasOne(d => d.User)
                 .WithMany(p => p.Posts)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

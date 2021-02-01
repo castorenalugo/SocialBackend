@@ -4,8 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Backend.Domain.Interfaces;
+using Backend.Domain.Repositories;
+using Backend.Domain.Services;
 using Backend.Infrastructure.Data;
+using Backend.Infrastructure.Filters;
 using Backend.Infrastructure.Repositories;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,13 +36,25 @@ namespace Backend.API
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.AddControllers();
+            services.AddControllers(options => {
+                options.Filters.Add<GlobalExceptionFilter>();
+            });
 
             services.AddDbContext<SocialMediaContext>(options =>
                 options.UseSqlServer(Environment.GetEnvironmentVariable("SOCIALDB")));
 
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<ValidationFilter>();
+            }).AddFluentValidation(options => {
+                options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+            });
+
             //Dependencies
-            services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<IPostService, PostService>();
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

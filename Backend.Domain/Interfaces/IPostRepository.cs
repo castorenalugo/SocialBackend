@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Backend.Domain.Entities;
+using Backend.Domain.Repositories;
 
 namespace Backend.Domain.Interfaces
 {
-    public interface IPostRepository
+    public interface IPostRepository : IRepository<Post>
     {
-        Task<IEnumerable<Post>> GetPosts();
-        Task<Post> GetPost(int id);
-        Task InsertPost(Post post);
+        Task<IEnumerable<Post>> GetPostsByUser(int userId);
     }
 }

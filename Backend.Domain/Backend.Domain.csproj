@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,5 +11,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="DTOs\" />
     <Folder Include="Exceptions\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>
