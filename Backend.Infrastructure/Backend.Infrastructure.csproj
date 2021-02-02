@@ -11,6 +11,8 @@
     <Folder Include="Filters\" />
     <Folder Include="Data\Configurations\" />
     <Folder Include="Mappings\" />
+    <Folder Include="Services\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Backend.Domain\Backend.Domain.csproj" />

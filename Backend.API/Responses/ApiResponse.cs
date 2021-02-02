@@ -1,4 +1,6 @@
 ﻿using System;
+using Backend.Domain.CustomEntities;
+
 namespace Backend.API.Responses
 {
     public class ApiResponse<T>
@@ -9,5 +11,7 @@ namespace Backend.API.Responses
         }
 
         public T Data { get; set; }
+
+        public Metadata Meta { get; set; }
     }
 }

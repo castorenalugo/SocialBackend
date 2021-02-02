@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Backend.Domain.CustomEntities;
@@ -7,17 +6,19 @@ using Backend.Domain.Entities;
 using Backend.Domain.Exceptions;
 using Backend.Domain.Interfaces;
 using Backend.Domain.QueryFilters;
-using Backend.Domain.Repositories;
+using Microsoft.Extensions.Options;
 
 namespace Backend.Domain.Services
 {
     public class PostService : IPostService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly PaginationOptions _paginationOptions;
 
-        public PostService(IUnitOfWork unitOfWork)
+        public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> options)
         {
             _unitOfWork = unitOfWork;
+            _paginationOptions = options.Value;
         }
 
 
@@ -29,6 +30,9 @@ namespace Backend.Domain.Services
 
         public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
+            filters.PageNumber = filters.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filters.PageNumber;
+            filters.PageSize = filters.PageSize == 0 ? _paginationOptions.DefaultPageSize : filters.PageSize;
+
             var posts = _unitOfWork.PostRepository.GetAll();
 
             if(filters.UserId != null)
